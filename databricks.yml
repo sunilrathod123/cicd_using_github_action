@@ -1,12 +1,11 @@
 bundle:
   name: my-data-project
 
-# Global variables
 variables:
   catalog:
-    description: autoloader
+    description: catalog
   schema:
-    description: source_data
+    description: schema
 
 targets:
   dev:
@@ -26,22 +25,12 @@ resources:
       name: my-data-job
 
       tasks:
-        - task_key: main_task
-          python_wheel_task:
-            package_name: my_data_project
-            entry_point: main
+        - task_key: hello_task
+          spark_python_task:
+            python_file: ./scripts/hello.py
           environment_key: default
 
-      # ⭐ THIS MAKES IT SERVERLESS
       environments:
         - environment_key: default
           spec:
             client: "1"
-            dependencies:
-              - .
-
-      parameters:
-        - name: catalog
-          default: ${var.catalog}
-        - name: schema
-          default: ${var.schema}
