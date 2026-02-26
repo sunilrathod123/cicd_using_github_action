@@ -1,21 +1,30 @@
 bundle:
   name: my-data-project
 
+
+# ⭐ ADD THIS (YOU ARE MISSING THIS)
+variables:
+  catalog:
+    description: autoloader
+  schema:
+    description: source_data
+    
 targets:
   dev:
     workspace:
       host: ${env.DATABRICKS_HOST}
     default: true
     variables:
-      catalog: dev_catalog
-      schema: dev_schema
+      catalog: autoloader
+      schema: source_data
+
 
   prod:
     workspace:
       host: ${env.DATABRICKS_HOST}
     variables:
-      catalog: prod_catalog
-      schema: prod_schema
+      catalog: autoloader
+      schema: source_data
 
 resources:
   jobs:
