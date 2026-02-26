@@ -11,8 +11,7 @@ variables:
     
 targets:
   dev:
-    workspace:
-      host: ${env.DATABRICKS_HOST}
+   
     default: true
     variables:
       catalog: autoloader
@@ -20,8 +19,6 @@ targets:
 
 
   prod:
-    workspace:
-      host: ${env.DATABRICKS_HOST}
     variables:
       catalog: autoloader
       schema: source_data
