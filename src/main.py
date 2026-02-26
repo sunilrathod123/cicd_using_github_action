@@ -1,5 +1,6 @@
 from pyspark.sql import SparkSession
 import os
+from pyspark.sql.functions import col
 
 def main():
     spark = SparkSession.builder.getOrCreate()
