@@ -1,0 +1,42 @@
+bundle:
+  name: my-data-project
+
+targets:
+  dev:
+    workspace:
+      host: ${env.DATABRICKS_HOST}
+    default: true
+    variables:
+      catalog: dev_catalog
+      schema: dev_schema
+
+  prod:
+    workspace:
+      host: ${env.DATABRICKS_HOST}
+    variables:
+      catalog: prod_catalog
+      schema: prod_schema
+
+resources:
+  jobs:
+    my_job:
+      name: my-data-job
+      tasks:
+        - task_key: main_task
+          python_wheel_task:
+            package_name: my_data_project
+            entry_point: main
+          job_cluster_key: job_cluster
+
+      job_clusters:
+        - job_cluster_key: job_cluster
+          new_cluster:
+            spark_version: 13.3.x-scala2.12
+            node_type_id: Standard_DS3_v2
+            num_workers: 2
+
+      parameters:
+        - name: catalog
+          default: ${var.catalog}
+        - name: schema
+          default: ${var.schema}

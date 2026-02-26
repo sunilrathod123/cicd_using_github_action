@@ -1,0 +1,31 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest flake8 wheel
+
+      - name: Run Tests
+        run: pytest tests/
+
+      - name: Lint Code
+        run: flake8 src/
+
+      - name: Build Wheel
+        run: python setup.py bdist_wheel
