@@ -1,22 +1,19 @@
 bundle:
   name: my-data-project
 
-
-# ⭐ ADD THIS (YOU ARE MISSING THIS)
+# Global variables
 variables:
   catalog:
     description: autoloader
   schema:
     description: source_data
-    
+
 targets:
   dev:
-   
     default: true
     variables:
       catalog: autoloader
       schema: source_data
-
 
   prod:
     variables:
@@ -27,19 +24,21 @@ resources:
   jobs:
     my_job:
       name: my-data-job
+
       tasks:
         - task_key: main_task
           python_wheel_task:
             package_name: my_data_project
             entry_point: main
-          job_cluster_key: job_cluster
+          environment_key: default
 
-      job_clusters:
-        - job_cluster_key: job_cluster
-          new_cluster:
-            spark_version: 13.3.x-scala2.12
-            node_type_id: Standard_DS3_v2
-            num_workers: 2
+      # ⭐ THIS MAKES IT SERVERLESS
+      environments:
+        - environment_key: default
+          spec:
+            client: "1"
+            dependencies:
+              - .
 
       parameters:
         - name: catalog
