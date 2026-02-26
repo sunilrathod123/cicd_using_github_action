@@ -13,17 +13,35 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install Databricks CLI
-        run: pip install databricks-cli
-
-      - name: Set Env Variables
+      # ⭐ IMPORTANT — Install NEW Databricks CLI
+      - name: Install Databricks CLI (NEW)
         run: |
-          echo "DATABRICKS_HOST=${{ secrets.DATABRICKS_HOST_DEV }}" >> $GITHUB_ENV
-          echo "DATABRICKS_TOKEN=${{ secrets.DATABRICKS_TOKEN_DEV }}" >> $GITHUB_ENV
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+          databricks -v
+
+      # Set authentication
+      - name: Configure Databricks Auth
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
+        run: |
+          databricks current-user me
+
+      # Validate bundle before deploy (VERY IMPORTANT in real companies)
+      - name: Validate Bundle
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
+        run: |
+          databricks bundle validate
 
       - name: Deploy Bundle to Dev
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
         run: |
           databricks bundle deploy --target dev
+
 
   deploy-prod:
     needs: deploy-dev
@@ -33,14 +51,21 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install Databricks CLI
-        run: pip install databricks-cli
-
-      - name: Set Env Variables
+      - name: Install Databricks CLI (NEW)
         run: |
-          echo "DATABRICKS_HOST=${{ secrets.DATABRICKS_HOST_PROD }}" >> $GITHUB_ENV
-          echo "DATABRICKS_TOKEN=${{ secrets.DATABRICKS_TOKEN_PROD }}" >> $GITHUB_ENV
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+          databricks -v
+
+      - name: Configure Databricks Auth
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_PROD }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_PROD }}
+        run: |
+          databricks current-user me
 
       - name: Deploy Bundle to Prod
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_PROD }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_PROD }}
         run: |
           databricks bundle deploy --target prod
