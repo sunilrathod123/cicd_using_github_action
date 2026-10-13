@@ -11,13 +11,13 @@ targets:
   dev:
     default: true
     variables:
-      catalog: autoloader
-      schema: source_data
+      catalog: databricks_asset_bundls
+      schema: raw
 
   prod:
     variables:
-      catalog: autoloader
-      schema: source_data
+      catalog: databricks_asset_bundls
+      schema: raw
 
 resources:
   jobs:
